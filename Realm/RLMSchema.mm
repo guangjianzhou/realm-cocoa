@@ -53,6 +53,10 @@ static enum class SharedSchemaState {
     Initialized
 } s_sharedSchemaState = SharedSchemaState::Uninitialized;
 
+@implementation RLMSchema {
+    NSArray *_objectSchema;
+}
+
 // Caller must @synchronize on s_localNameToClass
 static RLMObjectSchema *RLMRegisterClass(Class cls) {
     if (RLMObjectSchema *schema = s_privateObjectSubclasses[[cls className]]) {
@@ -72,7 +76,9 @@ static RLMObjectSchema *RLMRegisterClass(Class cls) {
 
     s_privateObjectSubclasses[schema.className] = schema;
     if ([cls shouldIncludeInDefaultSchema]) {
+        // FIXME: thread-safety
         s_sharedSchema.objectSchemaByName[schema.className] = schema;
+        s_sharedSchema->_objectSchema = nil;
     }
 
     return schema;
@@ -109,10 +115,6 @@ static void RLMRegisterClassLocalNames(Class *classes, NSUInteger count) {
         s_localNameToClass[className] = cls;
         RLMReplaceClassNameMethod(cls, className);
     }
-}
-
-@implementation RLMSchema {
-    NSArray *_objectSchema;
 }
 
 - (instancetype)init {
@@ -288,15 +290,6 @@ static void RLMRegisterClassLocalNames(Class *classes, NSUInteger count) {
     RLMSchema *schema = [[RLMSchema allocWithZone:zone] init];
     schema->_objectSchemaByName = [[NSMutableDictionary allocWithZone:zone]
                                    initWithDictionary:_objectSchemaByName copyItems:YES];
-    return schema;
-}
-
-- (instancetype)shallowCopy {
-    RLMSchema *schema = [[RLMSchema alloc] init];
-    schema->_objectSchemaByName = [[NSMutableDictionary alloc] initWithCapacity:_objectSchemaByName.count];
-    [_objectSchemaByName enumerateKeysAndObjectsUsingBlock:^(NSString *name, RLMObjectSchema *objectSchema, BOOL *) {
-        schema->_objectSchemaByName[name] = [objectSchema shallowCopy];
-    }];
     return schema;
 }
 
