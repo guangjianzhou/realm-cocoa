@@ -478,6 +478,8 @@ typedef void (^RLMMigrationBlock)(RLMMigration *migration, uint64_t oldSchemaVer
  */
 + (nullable NSError *)migrateRealm:(RLMRealmConfiguration *)configuration;
 
+- (void)dispatchAsync:(dispatch_queue_t)queue handingOver:(NSArray<RLMObject *> *)objectsToHandOver withBlock:(void(^)(RLMRealm *, NSArray<RLMObject *> *))block;
+
 @end
 
 /**
