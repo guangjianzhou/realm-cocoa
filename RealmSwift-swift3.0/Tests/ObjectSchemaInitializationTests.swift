@@ -136,9 +136,14 @@ class ObjectSchemaInitializationTests: TestCase {
             "Should throw when not marking a link property as optional")
 
         assertThrows(RLMObjectSchema(forObjectClass: SwiftObjectWithNSNumber.self),
-            "Can't persist NSNumber directly: use a Swift-native number type or provide a default value, which allows to infer the type")
+                     "Show throw when persisting NSNumber without default value on s model",
+                     withReasonMatching: "Can't persist NSNumber directly: use a Swift-native number type or provide" +
+            " a default value, which allows to infer the type")
         assertThrows(RLMObjectSchema(forObjectClass: SwiftObjectWithOptionalNSNumber.self),
-            "Can't persist NSNumber directly: use a Swift-native number type or provide a default value, which allows to infer the type")
+                     "Show throw when persisting NSNumber without default value on s model",
+                     withReasonMatching: "Can't persist NSNumber directly: use a Swift-native number type or provide" +
+            " a default value, which allows to infer the type")
+
     }
 
     func testPrimaryKey() {

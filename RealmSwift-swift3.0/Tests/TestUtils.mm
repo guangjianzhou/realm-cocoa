@@ -53,3 +53,25 @@ void RLMAssertThrows(XCTestCase *self, dispatch_block_t block, NSString *name, N
 bool RLMHasCachedRealmForPath(NSString *path) {
     return RLMGetAnyCachedRealmForPath(path.UTF8String);
 }
+
+void RLMAssertThrowsWithReasonMatchingSwift(XCTestCase *self, dispatch_block_t block, NSString *regexString, NSString *message, NSString *fileName, NSUInteger lineNumber) {
+    BOOL didThrow = NO;
+    @try {
+        block();
+    }
+    @catch (NSException *e) {
+        didThrow = YES;
+        NSString *reason = e.reason;
+        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regexString options:(NSRegularExpressionOptions)0 error:nil];
+        if ([regex numberOfMatchesInString:reason options:(NSMatchingOptions)0 range:NSMakeRange(0, reason.length)] == 0) {
+            NSString *msg = [NSString stringWithFormat:@"The given expression threw an exception with reason '%@', but expected to match '%@'",
+                             reason, regexString];
+            [self recordFailureWithDescription:msg inFile:fileName atLine:lineNumber expected:NO];
+        }
+    }
+    if (!didThrow) {
+        NSString *prefix = @"The given expression failed to throw an exception";
+        message = message ? [NSString stringWithFormat:@"%@ (%@)",  prefix, message] : prefix;
+        [self recordFailureWithDescription:message inFile:fileName atLine:lineNumber expected:NO];
+    }
+}
