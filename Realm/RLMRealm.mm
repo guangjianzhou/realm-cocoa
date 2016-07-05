@@ -705,7 +705,8 @@ REALM_NOINLINE void RLMRealmTranslateException(NSError **error) {
     }
 }
 
-- (void)dispatchAsync:(dispatch_queue_t)queue handingOver:(NSArray<RLMObject *> *)objectsToHandOver withBlock:(void(^)(RLMRealm *, NSArray<RLMObject *> *))block {
+- (void)dispatchAsync:(dispatch_queue_t)queue handingOver:(NSArray<RLMObject *> *)objectsToHandOver
+        withBlock:(void(^)(RLMRealm *, NSArray<RLMObject *> *))block {
     std::vector<realm::Row> rowsToHandOver;
     rowsToHandOver.reserve(objectsToHandOver.count);
     NSMutableArray<NSString *> *classNames = [NSMutableArray arrayWithCapacity:objectsToHandOver.count];
@@ -727,7 +728,8 @@ REALM_NOINLINE void RLMRealmTranslateException(NSError **error) {
             NSMutableArray<RLMObject *> *acceptedObjects = [NSMutableArray arrayWithCapacity:classNames.count];
             for (NSUInteger i = 0; i < classNames.count; i++) {
                 RLMObjectSchema *schema = [realm.schema schemaForClassName:classNames[i]];
-                [acceptedObjects addObject: (RLMObject *)RLMCreateObjectAccessor(realm, schema, acceptedRows[i]->get_index())];
+                [acceptedObjects addObject: (RLMObject *)RLMCreateObjectAccessor(realm, schema,
+                                                                                 acceptedRows[i]->get_index())];
             }
             block(realm, acceptedObjects);
         }
