@@ -808,7 +808,7 @@ class SwiftPerformanceTests: TestCase {
 
     func testRealmCreationCached() {
         var realm: Realm!
-        dispatchSyncNewThread {
+        dispatchAsyncAndWait {
             realm = try! Realm()
         }
 
