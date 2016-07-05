@@ -116,6 +116,11 @@ class TestCase: XCTestCase {
         RLMAssertThrows(self, { _ = block() } as dispatch_block_t, named, message, fileName, lineNumber)
     }
 
+    func assertThrows<T>(@autoclosure(escaping) block: () -> T, _ message: String? = nil,
+                      withReasonMatching regexString: String, fileName: String = #file, lineNumber: UInt = #line) {
+        RLMAssertThrowsWithReasonMatchingSwift(self, { _ = block() } as dispatch_block_t, regexString, message, fileName, lineNumber)
+    }
+
     func assertSucceeds(message: String? = nil, fileName: StaticString = #file,
                         lineNumber: UInt = #line, @noescape block: () throws -> ()) {
         do {
