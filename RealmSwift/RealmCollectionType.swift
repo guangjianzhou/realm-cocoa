@@ -119,7 +119,7 @@ public enum RealmCollectionChange<T> {
 A homogenous collection of `Object`s which can be retrieved, filtered, sorted,
 and operated upon.
 */
-public protocol RealmCollection: RandomAccessCollection, CustomStringConvertible {
+public protocol RealmCollection: RandomAccessCollection, LazyCollectionProtocol, CustomStringConvertible {
 
     /// Element type contained in this collection.
     associatedtype Element: Object
@@ -1080,7 +1080,7 @@ public enum RealmCollectionChange<T> {
  A homogenous collection of `Object`s which can be retrieved, filtered, sorted,
  and operated upon.
 */
-public protocol RealmCollectionType: CollectionType, CustomStringConvertible {
+public protocol RealmCollectionType: LazyCollectionType, CustomStringConvertible {
 
     /// The type of the objects contained in the collection.
     associatedtype Element: Object
