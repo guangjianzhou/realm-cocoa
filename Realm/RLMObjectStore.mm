@@ -79,11 +79,7 @@ void RLMInitializeSwiftAccessorGenerics(__unsafe_unretained RLMObjectBase *const
 
     for (RLMProperty *prop in object->_objectSchema.swiftGenericProperties) {
         if (prop->_type == RLMPropertyTypeArray) {
-            RLMArray *array = [RLMArrayLinkView arrayWithObjectClassName:prop.objectClassName
-                                                                    view:object->_row.get_linklist(object->_info->tableColumn(prop))
-                                                                   realm:object->_realm
-                                                                     key:prop.name
-                                                            parentSchema:*object->_info];
+            RLMArray *array = [[RLMArrayLinkView alloc] initWithParent:object property:prop];
             [object_getIvar(object, prop.swiftIvar) set_rlmArray:array];
         }
         else if (prop.type == RLMPropertyTypeLinkingObjects) {

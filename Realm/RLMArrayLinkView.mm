@@ -46,18 +46,17 @@
     std::unique_ptr<RLMObservationInfo> _observationInfo;
 }
 
-+ (RLMArrayLinkView *)arrayWithObjectClassName:(NSString *)objectClassName
-                                          view:(realm::LinkViewRef)view
-                                         realm:(RLMRealm *)realm
-                                           key:(NSString *)key
-                                  parentSchema:(RLMObjectInfo&)parentSchema {
-    RLMArrayLinkView *ar = [[RLMArrayLinkView alloc] initWithObjectClassName:objectClassName];
-    ar->_backingList = realm::List(realm->_realm, view);
-    ar->_realm = realm;
-    ar->_objectInfo = &ar->_realm->_info[objectClassName];
-    ar->_ownerInfo = &parentSchema;
-    ar->_key = key;
-    return ar;
+- (RLMArrayLinkView *)initWithParent:(__unsafe_unretained RLMObjectBase *const)parentObject
+                            property:(__unsafe_unretained RLMProperty *const)property {
+    self = [self initWithObjectClassName:property.objectClassName];
+    if (self) {
+        _realm = parentObject->_realm;
+        _backingList = realm::List(_realm->_realm, parentObject->_row.get_linklist(parentObject->_info->tableColumn(property)));
+        _objectInfo = &_realm->_info[_objectClassName];
+        _ownerInfo = parentObject->_info;
+        _key = property.name;
+    }
+    return self;
 }
 
 void RLMValidateArrayObservationKey(__unsafe_unretained NSString *const keyPath,

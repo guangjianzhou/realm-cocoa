@@ -28,8 +28,7 @@ namespace realm {
     class Results;
 }
 
-@class RLMObjectBase;
-@class RLMObjectSchema;
+@class RLMObjectBase, RLMObjectSchema, RLMProperty;
 class RLMObservationInfo;
 struct RLMObjectInfo;
 
@@ -47,11 +46,7 @@ struct RLMObjectInfo;
 // LinkView backed RLMArray subclass
 //
 @interface RLMArrayLinkView : RLMArray <RLMFastEnumerable>
-+ (RLMArrayLinkView *)arrayWithObjectClassName:(NSString *)objectClassName
-                                          view:(realm::LinkViewRef)view
-                                         realm:(RLMRealm *)realm
-                                           key:(NSString *)key
-                                  parentSchema:(RLMObjectInfo&)parentSchema;
+- (instancetype)initWithParent:(RLMObjectBase *)parentObject property:(RLMProperty *)property;
 
 // deletes all objects in the RLMArray from their containing realms
 - (void)deleteObjectsFromRealm;

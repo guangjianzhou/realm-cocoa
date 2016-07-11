@@ -240,15 +240,8 @@ static inline void RLMSetValue(__unsafe_unretained RLMObjectBase *const obj, NSU
 // array getter/setter
 static inline RLMArray *RLMGetArray(__unsafe_unretained RLMObjectBase *const obj, NSUInteger colIndex) {
     RLMVerifyAttached(obj);
-    auto col = obj->_info->objectSchema->persisted_properties[colIndex].table_column;
     auto prop = obj->_info->rlmObjectSchema.properties[colIndex];
-
-    realm::LinkViewRef linkView = obj->_row.get_linklist(col);
-    return [RLMArrayLinkView arrayWithObjectClassName:prop.objectClassName
-                                                 view:linkView
-                                                realm:obj->_realm
-                                                  key:prop.name
-                                         parentSchema:*obj->_info];
+    return [[RLMArrayLinkView alloc] initWithParent:obj property:prop];
 }
 
 static inline void RLMSetValue(__unsafe_unretained RLMObjectBase *const obj, NSUInteger colIndex,
